@@ -5,7 +5,7 @@ import { Wall } from './server/Wall'
 import { Bullet } from './server/Bullet'
 import { MapGame } from './server/MapGame'
 
-const db = mongo('localhost:27017/myGame', ['accout', 'progress'])
+// const db = mongo('localhost:27017/myGame', ['accout', 'progress'])
 let app = express()
 let serv = require('http').Server(app)
 let port = 2000
@@ -137,31 +137,31 @@ Wall.update = () => {
 
 Wall.list = {}
 
-const isValidPassword = (login, pass, callback) => {
-	db.account.find({username: login, password: pass}, (err, res)=>{
-		if(res.length > 0){
-			callback(true)
-		}else{
-			callback(false)
-		}
-	})
-}
+// const isValidPassword = (login, pass, callback) => {
+// 	db.account.find({username: login, password: pass}, (err, res)=>{
+// 		if(res.length > 0){
+// 			callback(true)
+// 		}else{
+// 			callback(false)
+// 		}
+// 	})
+// }
 
-const isUserNameTaken = (login, callback) => {
-	db.account.find({username: login}, (err, res)=>{
-		if(res.length > 0){
-			callback(true)
-		}else{
-			callback(false)
-		}
-	})
-}
+// const isUserNameTaken = (login, callback) => {
+// 	db.account.find({username: login}, (err, res)=>{
+// 		if(res.length > 0){
+// 			callback(true)
+// 		}else{
+// 			callback(false)
+// 		}
+// 	})
+// }
 
-const addUser = (login, pass, callback) => {
-	db.account.insert({username: login, password: pass}, (err, res)=>{
-		callback()
-	})
-}
+// const addUser = (login, pass, callback) => {
+// 	db.account.insert({username: login, password: pass}, (err, res)=>{
+// 		callback()
+// 	})
+// }
 
 let io = require('socket.io')(serv,{})
 io.sockets.on('connection', (socket)=> {
@@ -188,26 +188,26 @@ io.sockets.on('connection', (socket)=> {
 	})
 
 	socket.on('signIn', (data)=>{
-		isValidPassword(data.login, data.password, (res)=>{
-			if(res){
-				Player.onConnect(socket, userId)
-				socket.emit('signInResponse', { success: true })
-			}else{
-				socket.emit('signInResponse', { success: false })
-			}
-		})
+		Player.onConnect(socket, userId)
+		socket.emit('signInResponse', { success: true })
+		// isValidPassword(data.login, data.password, (res)=>{
+		// 	if(res){
+		// 	}else{
+		// 		socket.emit('signInResponse', { success: false })
+		// 	}
+		// })
 	})
 
 	socket.on('signUp', (data)=>{
-		isUserNameTaken(data.login, (res)=>{
-			if(res){
-				socket.emit('signUpResponse', { success: false })
-			}else{
-				addUser(data.login, data.password, ()=>{
-					socket.emit('signUpResponse', { success: true })
-				})
-			}
-		})
+		socket.emit('signUpResponse', { success: true })
+		// isUserNameTaken(data.login, (res)=>{
+		// 	if(res){
+		// 		socket.emit('signUpResponse', { success: false })
+		// 	}else{
+		// 		addUser(data.login, data.password, ()=>{
+		// 		})
+		// 	}
+		// })
 	})
 
 	socket.on('disconnect', ()=>{
